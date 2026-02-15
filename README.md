@@ -475,5 +475,5 @@ It is orchestrated.
 
 Mercure is the orchestrator.
 
-You can contact me on [my personal email](mailto: tchoupe4466@gmail.com)
+You can contact me on tchoupe4466@gmail.com
 
