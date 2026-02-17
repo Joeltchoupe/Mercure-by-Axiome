@@ -101,19 +101,4 @@ export interface AgentDailyStats {
   successRate: number;
   avgDurationMs: number;
   totalCostUsd: number;
-}  successRate: number;
-  avgDurationMs: number;
-  totalCostUsd: number;
-}
-
-export interface AgentConfig {
-  id: string;
-  storeId: string;
-  agentType: AgentType;
-  enabled: boolean;
-  priority: number;
-  maxActionsPerHour: number;
-  llmModel: string;
-  maxCostPerDayUsd: number;
-  config: Record<string, unknown>;
 }
