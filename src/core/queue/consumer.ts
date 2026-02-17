@@ -32,3 +32,38 @@ export async function verifyQStashSignature(
     return false;
   }
 }
+
+export interface ConsumedMessage {
+  eventId: string;
+  storeId: string;
+  type: string;
+  payload: Record<string, unknown>;
+  priority: string;
+  retryCount: number;
+  receivedAt: Date;
+}
+
+export function parseConsumedMessage(
+  body: Record<string, unknown>,
+  headers: Headers
+): ConsumedMessage {
+  return {
+    eventId:
+      (headers.get('x-axiome-event-id') as string) ??
+      (body.eventId as string) ??
+      '',
+    storeId:
+      (headers.get('x-axiome-store-id') as string) ??
+      (body.storeId as string) ??
+      '',
+    type: (body.type as string) ?? '',
+    payload: (body.payload as Record<string, unknown>) ?? {},
+    priority:
+      (headers.get('x-axiome-priority') as string) ?? 'normal',
+    retryCount: parseInt(
+      headers.get('upstash-retried') ?? '0',
+      10
+    ),
+    receivedAt: new Date(),
+  };
+      }
