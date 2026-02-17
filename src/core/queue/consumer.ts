@@ -66,4 +66,4 @@ export function parseConsumedMessage(
     ),
     receivedAt: new Date(),
   };
-      }
+  }
