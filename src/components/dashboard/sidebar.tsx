@@ -3,6 +3,7 @@
 'use client';
 
 import Link from 'next/link';
+import { CreditCard } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import {
   LayoutDashboard,
@@ -23,6 +24,11 @@ const NAV_ITEMS = [
     label: 'Overview',
     href: '/dashboard',
     icon: LayoutDashboard,
+  },
+  {
+  label: 'Billing',
+  href: '/dashboard/billing',
+  icon: CreditCard,
   },
   {
     label: 'Agents',
