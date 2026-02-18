@@ -1,6 +1,7 @@
 // src/core/agent-os/orchestrator.ts
 
 import { AgentRegistry } from '@/core/agent-os/agent-registry';
+import { BillingGuard } from '@/core/billing/billing-guard';
 import { ContextBuilder } from '@/core/agent-os/context-builder';
 import { BudgetGuard } from '@/core/agent-os/budget-guard';
 import { RateLimiter } from '@/core/agent-os/rate-limiter';
@@ -20,6 +21,7 @@ export class Orchestrator {
   private agentRunRepo: AgentRunRepo;
   private eventRepo: EventRepo;
   private metricsRepo: MetricsRepo;
+  private billingGuard: BillingGuard;
 
   constructor() {
     this.registry = new AgentRegistry();
@@ -29,6 +31,7 @@ export class Orchestrator {
     this.agentRunRepo = new AgentRunRepo();
     this.eventRepo = new EventRepo();
     this.metricsRepo = new MetricsRepo();
+    this.billingGuard = new BillingGuard();
   }
 
   async processEvent(event: AgentEvent): Promise<void> {
@@ -41,6 +44,16 @@ export class Orchestrator {
       });
       return;
     }
+    // ─── BILLING CHECK ───
+  const billingCheck = await this.billingGuard.canProcessEvent(event.storeId);
+  if (!billingCheck.allowed) {
+    logger.warn('Event blocked by billing', {
+      storeId: event.storeId,
+      reason: billingCheck.reason,
+    });
+    await markProcessed(`agent:${event.id}`);
+    return;
+  }
 
     try {
       // 2. Build context
@@ -172,6 +185,7 @@ export class Orchestrator {
             eventId: event.id,
             error: agentError,
           });
+          
 
           await this.agentRunRepo.create({
             storeId: event.storeId,
